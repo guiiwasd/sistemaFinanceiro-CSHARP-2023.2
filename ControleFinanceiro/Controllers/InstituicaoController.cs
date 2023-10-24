@@ -36,5 +36,21 @@ namespace ControleFinanceiro.Controllers
             instituicoes.Add(instituicao);
             return RedirectToAction("Index");
         }
+        public ActionResult Edit(long id)
+        {
+            return View(instituicoes.Where(i => i.InstituicaoId == id).First());
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Instituicao instituicao) /*sobrecarga */
+        {
+            instituicoes.Remove(instituicoes.Where(i => i.InstituicaoId == instituicao.InstituicaoId).First());
+            instituicoes.Add(instituicao);
+            return RedirectToAction("Index");
+        }
+        public ActionResult Details(long id)
+        {
+            return View(instituicoes.Where(i => i.InstituicaoId == id).First());
+        }
     }
 }
