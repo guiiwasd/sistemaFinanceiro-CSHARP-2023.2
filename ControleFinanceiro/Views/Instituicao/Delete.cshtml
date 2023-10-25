@@ -1,11 +1,19 @@
 ﻿@model ControleFinanceiro.Models.Instituicao
 
 @{
-    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<!DOCTYPE html>
 
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Delete</title>
+</head>
+<body>
+
+<h3>Você tem certeza que deseja deletar?</h3>
 <div>
     <h4>Instituicao</h4>
     <hr />
@@ -29,8 +37,12 @@
             @Html.DisplayFor(model => model.Endereco)
         </dd>
     </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="InstituicaoId"/>
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Voltar para a lista</a>
+    </form>
 </div>
-<div>
-    @Html.ActionLink("Editar", "Edit", new { id = Model.InstituicaoId }) |
-    <a asp-action="Index">Voltar para a lista</a>
-</div>
+</body>
+</html>
