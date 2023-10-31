@@ -56,8 +56,8 @@ namespace ControleFinanceiro.Controllers
         {
             return View(instituicoes.Where(i => i.InstituicaoId == id).First());
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        [HttpPost] /*formulário, vem de objeto */
+        [ValidateAntiForgeryToken] /*todo site tem seu token, ele recebe esse token ele verifica se está correto*/
         public ActionResult Delete(Instituicao instituicao) /*sobrecarga */
         {
             instituicoes.Remove(instituicoes.Where(i => i.InstituicaoId == instituicao.InstituicaoId).First());
