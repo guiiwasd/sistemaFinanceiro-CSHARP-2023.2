@@ -1,40 +1,45 @@
-﻿using ControleFinanceiro.Models;
+﻿using ControleFinanceiro.Data;
+using ControleFinanceiro.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ControleFinanceiro.Controllers
 {
     public class InstituicaoController : Controller
-    {
-        public static IList<Instituicao> instituicoes = new List<Instituicao>()
+    {   
+        private readonly AcademicoContext _context;
+
+        public InstituicaoController(AcademicoContext context)
         {
-            new Instituicao ()
-            {
-                InstituicaoId = 1,
-                Nome = "Hogwarts",
-                Endereco = "Escocia"
-            },
-            new Instituicao()
-            {
-                InstituicaoId = 2,
-                Nome = "Mansão X",
-                Endereco = "New York"
-            }
-        };
-        public IActionResult Index()
+            _context = context;
+        }
+
+        public async Task<IActionResult> Index()
         {
-            return View(instituicoes);
+            return View(await _context.Instituicoes.OrderBy(i => i.Nome).ToListAsync());
         }
         public IActionResult Create()
         {
             return View();
         }
-        [HttpPost]
+        [HttpPost] /* formuláio */
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Instituicao instituicao) /*sobrecarga */
+        public async Task<ActionResult> Create([Bind("Nome", "Endereco")]Instituicao instituicao) /*sobrecarga */
         {
-            instituicao.InstituicaoId = instituicoes.Select(i => i.InstituicaoId).Max() + 1;
-            instituicoes.Add(instituicao);
-            return RedirectToAction("Index");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.Add(instituicao);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+            }
+            catch(DbUpdateException)
+            {
+                ModelState.AddModelError("", "Não foi possível cadastrar a instituição.");
+            }
+            return View();
         }
         public ActionResult Edit(long id)
         {
