@@ -35,37 +35,97 @@ namespace ControleFinanceiro.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch(DbUpdateException)
+            catch(DbUpdateException ex)
             {
-                ModelState.AddModelError("", "Não foi possível cadastrar a instituição.");
+                ModelState.AddModelError("Erro de cadastro", "Não foi possível cadastrar a instituição.");
             }
-            return View();
+            return View(instituicao);
         }
-        public ActionResult Edit(long id)
+        public async Task<ActionResult> Edit(long id)
         {
-            return View(instituicoes.Where(i => i.InstituicaoId == id).First());
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var instituicao = await _context.Instituicoes.SingleOrDefaultAsync(i => i.InstituicaoId == id);
+            if (instituicao == null)
+            {
+                return NotFound();
+            }
+            return View(instituicao);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Instituicao instituicao) /*sobrecarga */
+        public async Task<IActionResult> Edit(long? id, [Bind("InstituicaoId", "Nome", "Endereco")] Instituicao instituicao)
         {
-            instituicoes.Remove(instituicoes.Where(i => i.InstituicaoId == instituicao.InstituicaoId).First());
-            instituicoes.Add(instituicao);
-            return RedirectToAction("Index");
+            if (id != instituicao.InstituicaoId)
+            {   
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(instituicao);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException ex) 
+                {
+                    if (!InstituicaoExists(instituicao.InstituicaoId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            return View(instituicao);
         }
-        public ActionResult Details(long id)
+
+        private bool InstituicaoExists(long? instituicaoId)
         {
-            return View(instituicoes.Where(i => i.InstituicaoId == id).First());
+            var instituicao = _context.Instituicoes.FirstOrDefault(i => i.InstituicaoId == instituicaoId);
+            if (instituicao == null)
+                return false;
+            return true;
         }
-        public ActionResult Delete(long id)
+        public async Task<ActionResult> Details(long id)
         {
-            return View(instituicoes.Where(i => i.InstituicaoId == id).First());
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var instituicao = await _context.Instituicoes.SingleOrDefaultAsync(i => i.InstituicaoId == id);
+            if (instituicao == null)
+            {
+                return NotFound();
+            }
+            return View(instituicao);
         }
-        [HttpPost] /*formulário, vem de objeto */
+        public async Task<ActionResult> Delete(long id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var instituicao = await _context.Instituicoes.SingleOrDefaultAsync(i => i.InstituicaoId == id);
+            if (instituicao == null)
+            {
+                return NotFound();
+            }
+            return View(instituicao);
+        }
+
+        [HttpPost, ActionName("Delete")] /*formulário, vem de objeto */
         [ValidateAntiForgeryToken] /*todo site tem seu token, ele recebe esse token ele verifica se está correto*/
-        public ActionResult Delete(Instituicao instituicao) /*sobrecarga */
+        public async Task<IActionResult> DeleteConfirmed(long? id) /*sobrecarga */
         {
-            instituicoes.Remove(instituicoes.Where(i => i.InstituicaoId == instituicao.InstituicaoId).First());
+            var instituicao = await _context.Instituicoes.SingleOrDefaultAsync(i => i.InstituicaoId == id);
+            _context.Instituicoes.Remove(instituicao);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
     }

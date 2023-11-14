@@ -1,29 +1,17 @@
 ﻿@model ControleFinanceiro.Models.Instituicao
 
 @{
+    ViewData["Title"] = "Delete";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
+<h1>Delete</h1>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Deletar</title>
-</head>
-<body>
-
-<h3>Você tem certeza que deseja deletar?</h3>
+<h3>Confirma exclusão desta instituição?</h3>
 <div>
     <h4>Instituicao</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InstituicaoId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InstituicaoId)
-        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Nome)
         </dt>
@@ -39,10 +27,8 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="InstituicaoId"/>
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <input type="hidden" asp-for="InstituicaoId" />
+        <input type="submit" value="Excluir" class="btn btn-danger" /> |
         <a asp-action="Index">Voltar para a lista</a>
     </form>
 </div>
-</body>
-</html>
